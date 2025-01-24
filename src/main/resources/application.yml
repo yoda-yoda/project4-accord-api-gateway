@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: api-gateway
+  security:
+    enabled: false
+  cloud:
+    consul:
+      host: 172.30.1.53
+      port: 8500
+      discovery:
+        enabled: true
+        register: true
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: spring-server
+          uri: lb://spring-server
+          predicates:
+            - Path=/spring/**
+          filters:
+            - StripPrefix=1
+        - id: go-server
+          uri: lb://go-server
+          predicates:
+            - Path=/go/**
+          filters:
+            - StripPrefix=1
+
+server:
+  port: 8082
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
