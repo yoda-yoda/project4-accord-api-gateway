@@ -30,6 +30,12 @@ spring:
             - Path=/go/**
           filters:
             - StripPrefix=1
+        - id: signaling-server
+          uri: lb://signaling-server
+          predicates:
+            - Path=/signaling/**
+          filters:
+            - StripPrefix=1
 
 server:
   port: 8082
