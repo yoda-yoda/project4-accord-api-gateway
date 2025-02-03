@@ -62,6 +62,12 @@ spring:
             - Path=/signaling/**
           filters:
             - StripPrefix=1
+        - id: gateway-prometheus-route
+          uri: http://localhost:9091
+          predicates:
+            - Path=/gateway-actuator/**
+          filters:
+            - StripPrefix=1
 
 server:
   port: 8082
@@ -70,7 +76,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info, prometheus
   endpoint:
     health:
       show-details: always
