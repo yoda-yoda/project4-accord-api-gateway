@@ -5,7 +5,7 @@ spring:
     enabled: false
   cloud:
     consul:
-      host: 172.30.1.64
+      host: localhost
       port: 8500
       discovery:
         enabled: true
@@ -38,6 +38,12 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
+        - id: oauth2_route
+          uri: lb://spring-server
+          predicates:
+            - Path=/spring/oauth2/authorization/**
+          filters:
+            - StripPrefix=1
         - id: spring-server
           uri: lb://spring-server
           predicates:
