@@ -44,30 +44,54 @@ spring:
             - Path=/spring/oauth2/authorization/**
           filters:
             - StripPrefix=1
+            - name: CircuitBreaker
+              args:
+                name: oauth2CircuitBreaker
+                fallbackUri: forward:/fallback/oauth2
+
         - id: spring-server
           uri: lb://spring-server
           predicates:
             - Path=/spring/**
           filters:
             - StripPrefix=1
+            - name: CircuitBreaker
+              args:
+                name: springCircuitBreaker
+                fallbackUri: forward:/fallback/spring
+
         - id: go-server
           uri: lb://go-server
           predicates:
             - Path=/go/**
           filters:
             - StripPrefix=1
+            - name: CircuitBreaker
+              args:
+                name: goCircuitBreaker
+                fallbackUri: forward:/fallback/go
+
         - id: signaling-server
           uri: lb://signaling-server
           predicates:
             - Path=/signaling/**
           filters:
             - StripPrefix=1
+            - name: CircuitBreaker
+              args:
+                name: signalingCircuitBreaker
+                fallbackUri: forward:/fallback/signaling
+
         - id: gateway-prometheus-route
           uri: http://localhost:9091
           predicates:
             - Path=/gateway-actuator/**
           filters:
             - StripPrefix=1
+            - name: CircuitBreaker
+              args:
+                name: prometheusCircuitBreaker
+                fallbackUri: forward:/fallback/prometheus
 
 server:
   port: 8082
@@ -84,3 +108,5 @@ logging:
   level:
     org.springframework.cloud.gateway: DEBUG
     org.springframework.web: DEBUG
+gateway:
+  fallback-url: "http://localhost:3000/error"
