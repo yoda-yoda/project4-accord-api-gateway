@@ -7,7 +7,7 @@ spring:
     enabled: false
   cloud:
     consul:
-      host: localhost
+      host: consul
       port: 8500
       discovery:
         enabled: true
@@ -23,6 +23,7 @@ spring:
           '[/**]':
             allowedOrigins:
               - "http://localhost:3000"
+              - "https://accord-react-bucket.s3-ap-southeast-2.amazonaws.com"
             allowedMethods:
               - GET
               - POST
@@ -85,7 +86,7 @@ spring:
                 fallbackUri: forward:/fallback/signaling
 
         - id: gateway-prometheus-route
-          uri: http://localhost:9091
+          uri: http://prometheus
           predicates:
             - Path=/gateway-actuator/**
           filters:
@@ -111,4 +112,4 @@ logging:
     org.springframework.cloud.gateway: DEBUG
     org.springframework.web: DEBUG
 gateway:
-  fallback-url: "http://localhost:3000/error"
+  fallback-url: "http://accord-react-bucket.s3-website-ap-southeast-2.amazonaws.com//error"

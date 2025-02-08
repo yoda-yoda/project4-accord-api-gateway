@@ -1,22 +1,19 @@
-FROM gradle:8.1.1-jdk21 AS builder
+# Base Image (빌드용) - JDK 21 지원
+FROM eclipse-temurin:21-jdk AS builder
+
 WORKDIR /app
 
-COPY gradlew .
-COPY gradle gradle
-COPY build.gradle settings.gradle ./
-
-RUN ./gradlew --no-daemon dependencies
-
+# Gradle Wrapper 사용하여 빌드
 COPY . .
+RUN chmod +x gradlew
+RUN ./gradlew bootJar --no-daemon
 
-RUN ./gradlew bootJar --no-daemon -x test
-
-FROM openjdk:21-jdk-slim
+# Runtime Image - JDK 21 사용
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 COPY --from=builder /app/build/libs/*.jar app.jar
-
-EXPOSE 8082
-
-# 애플리케이션 실행
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
+
+
